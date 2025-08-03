@@ -188,6 +188,8 @@
 										type="button"
 										onclick={() => (showPassword = !showPassword)}
 										class="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
+										aria-label={showPassword ? 'Hide Password' : 'Show Password'}
+										aria-pressed={showPassword}
 									>
 										{#if showPassword}
 											<EyeOffIcon class="h-4 w-4" />
