@@ -18,9 +18,16 @@
 	"kv_namespaces": [
 		{
 			"binding": "MESSAGES",
-			"id": "6a4f1b8f0f77461a8163a7478cb09c0c"
+			"id": "d7d5a1a6ae994b21acaa4b0d95b91149"
 		}
 	],
+	"env": {
+		"production": {
+			"vars": {
+				"APP_URL": "https://ddrp.fyi"
+			}
+		}
+	}
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
@@ -38,7 +45,7 @@
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 	 */
-	"vars": { "APP_URL": "https://ddrp.provided.space" }
+	// "vars": { "MY_VARIABLE": "production_value" },
 	/**
 	 * Note: Use secrets to store sensitive data.
 	 * https://developers.cloudflare.com/workers/configuration/secrets/
