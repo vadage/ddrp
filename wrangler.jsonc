@@ -15,17 +15,17 @@
 	"observability": {
 		"enabled": true
 	},
-	"kv_namespaces": [
-		{
-			"binding": "MESSAGES",
-			"id": "d7d5a1a6ae994b21acaa4b0d95b91149"
-		}
-	],
 	"env": {
 		"production": {
 			"vars": {
 				"APP_URL": "https://ddrp.fyi"
-			}
+			},
+			"kv_namespaces": [
+				{
+					"binding": "MESSAGES",
+					"id": "d7d5a1a6ae994b21acaa4b0d95b91149"
+				}
+			]
 		}
 	}
 	/**
