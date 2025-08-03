@@ -63,3 +63,29 @@ resource "cloudflare_ruleset" "prod_ratelimit" {
     customCounter = false
   }]
 }
+
+resource "cloudflare_ruleset" "prod_firewall" {
+  kind        = "zone"
+  name        = "Terraformed firewall"
+  phase       = "http_request_firewall_custom"
+  zone_id     = cloudflare_zone.prod_domain.id
+  description = "Firewall managed by terraform"
+  rules = [{
+    action      = "managed_challenge"
+    description = "Outdated protocol"
+    enabled     = true
+    expression  = "(http.request.version in {\"HTTP/1.0\" \"HTTP/1.1\" \"HTTP/1.2\"} and not cf.client.bot)"
+  }]
+}
+
+resource "cloudflare_zone_setting" "prod_always_use_https" {
+  zone_id    = cloudflare_zone.prod_domain.id
+  setting_id = "always_use_https"
+  value      = "on"
+}
+
+resource "cloudflare_zone_setting" "prod_min_tls_version" {
+  zone_id    = cloudflare_zone.prod_domain.id
+  setting_id = "min_tls_version"
+  value      = "1.2"
+}
