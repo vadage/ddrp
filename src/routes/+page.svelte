@@ -19,6 +19,7 @@
 	import { generateLink } from '$lib/messenger';
 	import { revokeMessage, type ShareableMessage } from '$lib/message.remote';
 	import { toast } from 'svelte-sonner';
+	import PasswordStrength from '$lib/components/PasswordStrength.svelte';
 
 	let message = $state('');
 	let ttl = $state('86400');
@@ -195,6 +196,9 @@
 										{/if}
 									</button>
 								</div>
+								{#if password}
+									<PasswordStrength {password} />
+								{/if}
 							</div>
 						</div>
 

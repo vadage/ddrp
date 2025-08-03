@@ -26,6 +26,7 @@
 		"@tailwindcss/vite": "^4.0.0",
 		"@types/node": "^24.1.0",
 		"bits-ui": "^2.9.1",
+		"check-password-strength": "^3.0.0",
 		"clsx": "^2.1.1",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
