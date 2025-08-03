@@ -59,7 +59,7 @@ async function createKey(keyMaterial: CryptoKey, salt: Uint8Array, usage: KeyUsa
 		{
 			name: 'PBKDF2',
 			salt,
-			iterations: 250000,
+			iterations: 1_000_000,
 			hash: 'SHA-256'
 		},
 		keyMaterial,
