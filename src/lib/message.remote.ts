@@ -8,7 +8,6 @@ export type Message = {
 	blob: string;
 	iv: number[];
 	salt: number[];
-	pw: boolean;
 };
 
 type MessagePayload = {
@@ -29,8 +28,7 @@ const MessagePayloadValidator = v.object({
 	message: v.object({
 		blob: v.pipe(v.string(), v.base64()),
 		iv: v.pipe(v.array(v.number()), v.length(12)),
-		salt: v.pipe(v.array(v.number()), v.length(16)),
-		pw: v.boolean()
+		salt: v.pipe(v.array(v.number()), v.length(16))
 	}),
 	ttl: v.pipe(v.number(), v.maxValue(604800))
 });

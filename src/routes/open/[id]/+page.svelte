@@ -24,6 +24,7 @@
 	let password = $state('');
 	let decryptFailed = $state(false);
 	let decrypted = $state('');
+	let passwordRequired = $state(false);
 
 	async function open() {
 		const { id } = page.params;
@@ -37,15 +38,14 @@
 			message = await retrieveMessage({ id, signature });
 			failed = false;
 
-			if (!message.pw) {
-				const hash = new URLSearchParams(page.url.hash.slice(1));
-				const key = hash.get('key');
-				if (!key) {
-					return;
-				}
-
-				await yay(key);
+			const hash = new URLSearchParams(page.url.hash.slice(1));
+			const key = hash.get('key');
+			if (!key) {
+				passwordRequired = true;
+				return;
 			}
+
+			await decryptWithPassphrase(key);
 		} catch (e) {
 			failed = true;
 			throw e;
@@ -56,10 +56,10 @@
 
 	async function decrypt(event: SubmitEvent) {
 		event.preventDefault();
-		await yay(password);
+		await decryptWithPassphrase(password);
 	}
 
-	async function yay(password: string) {
+	async function decryptWithPassphrase(password: string) {
 		if (!message) {
 			return;
 		}
@@ -104,7 +104,7 @@
 						<Button href="/" class="w-full">Reply</Button>
 					</div>
 				{:else if message}
-					{#if message.pw}
+					{#if passwordRequired}
 						<form onsubmit={decrypt} class="space-y-4">
 							<div class="space-y-2">
 								<Label for="password" class="flex items-center gap-2 text-sm font-medium">

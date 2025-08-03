@@ -21,8 +21,7 @@ export async function generateLink(message: string, password: string, ttl: strin
 		message: {
 			blob: encodeBytes(ciphertext),
 			iv: Array.from(iv),
-			salt: Array.from(salt),
-			pw: passwordExists
+			salt: Array.from(salt)
 		}
 	});
 

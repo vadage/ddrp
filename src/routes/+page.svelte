@@ -18,7 +18,7 @@
 	} from '@lucide/svelte';
 	import { generateLink } from '$lib/messenger';
 	import { revokeMessage, type ShareableMessage } from '$lib/message.remote';
-	import { toast } from "svelte-sonner";
+	import { toast } from 'svelte-sonner';
 
 	let message = $state('');
 	let ttl = $state('86400');
