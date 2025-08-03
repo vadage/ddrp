@@ -1,4 +1,5 @@
 import { createMessage, type Message } from '$lib/message.remote';
+import argon2 from 'argon2-browser/dist/argon2-bundled.min.js';
 
 export async function generateLink(message: string, password: string, ttl: string) {
 	const enc = new TextEncoder();
@@ -10,8 +11,7 @@ export async function generateLink(message: string, password: string, ttl: strin
 		password = encodeBytes(crypto.getRandomValues(new Uint8Array(16)));
 	}
 
-	const keyMaterial = await createKeyMaterial(password);
-	const key = await createKey(keyMaterial, salt, 'encrypt');
+	const key = await createKey(password, salt, 'encrypt');
 	const ciphertext = new Uint8Array(
 		await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(message))
 	);
@@ -35,8 +35,7 @@ export async function decryptMessage(message: Message, password: string) {
 	const dec = new TextDecoder();
 	const { salt, iv, blob } = message;
 
-	const keyMaterial = await createKeyMaterial(password);
-	const key = await createKey(keyMaterial, new Uint8Array(salt), 'decrypt');
+	const key = await createKey(password, new Uint8Array(salt), 'decrypt');
 
 	const decrypted = await crypto.subtle.decrypt(
 		{
@@ -49,24 +48,20 @@ export async function decryptMessage(message: Message, password: string) {
 	return dec.decode(decrypted);
 }
 
-async function createKeyMaterial(password: string) {
-	const enc = new TextEncoder();
-	return await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
-}
+async function createKey(password: string, salt: Uint8Array, usage: KeyUsage) {
+	const pass = new TextEncoder().encode(password);
 
-async function createKey(keyMaterial: CryptoKey, salt: Uint8Array, usage: KeyUsage) {
-	return await crypto.subtle.deriveKey(
-		{
-			name: 'PBKDF2',
-			salt,
-			iterations: 1_000_000,
-			hash: 'SHA-256'
-		},
-		keyMaterial,
-		{ name: 'AES-GCM', length: 256 },
-		false,
-		[usage]
-	);
+	const { hash: derivedKey } = await argon2.hash({
+		pass,
+		salt,
+		type: argon2.ArgonType.Argon2id,
+		hashLen: 32,
+		time: 3,
+		mem: 65536,
+		parallelism: 1
+	});
+
+	return await crypto.subtle.importKey('raw', derivedKey, { name: 'AES-GCM' }, false, [usage]);
 }
 
 function encodeBytes(data: Uint8Array) {

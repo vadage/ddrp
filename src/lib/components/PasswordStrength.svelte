@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { passwordStrength } from 'check-password-strength';
+	import { type Options, passwordStrength } from 'check-password-strength';
 	import { cn } from '$lib/utils';
 
 	let { password }: { password: string } = $props();
@@ -10,7 +10,7 @@
 		textColor: string;
 	};
 
-	const options: Strength[] = [
+	const options: Options<Strength> = [
 		{
 			id: 0,
 			value: {
@@ -53,7 +53,7 @@
 		}
 	];
 
-	const strength = $derived(passwordStrength<Strength>(password, options));
+	const strength = $derived(passwordStrength(password, options));
 </script>
 
 <div class="space-y-2">
@@ -72,7 +72,7 @@
 					option.id <= strength.id ? strength.value.color : 'bg-muted'
 				)}
 				role="progressbar"
-				aria-valuenow={strength.id + 1}
+				aria-valuenow={option.id + 1}
 				aria-valuemin="1"
 				aria-valuemax="4"
 				aria-label="Password strength indicator segment {option.id + 1}"
