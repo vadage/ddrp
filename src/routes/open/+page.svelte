@@ -9,7 +9,7 @@
 		MessageSquareIcon
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
-	import * as Alert from '$lib/components/ui/alert/index.js';
+	import * as Alert from '$lib/components/ui/alert';
 	import { page } from '$app/state';
 	import { type Message, retrieveMessage } from '$lib/message.remote';
 	import { Label } from '$lib/components/ui/label';
@@ -27,7 +27,7 @@
 	let passwordRequired = $state(false);
 
 	async function open() {
-		const { id } = page.params;
+		const id = page.url.searchParams.get('id');
 		const signature = page.url.searchParams.get('sig');
 		if (!id || !signature) {
 			return;

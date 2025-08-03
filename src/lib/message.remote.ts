@@ -46,7 +46,7 @@ export const createMessage = command(MessagePayloadValidator, async (data: Messa
 
 	const id = nanoid(36);
 	const signature = signId(id, platform);
-	const link = `${platform?.env.APP_URL}/open/${id}?sig=${signature}`;
+	const link = `${platform?.env.APP_URL}/open?id=${id}&sig=${signature}`;
 
 	await platform?.env.MESSAGES.put(id, JSON.stringify(data.message), {
 		expirationTtl: data.ttl
