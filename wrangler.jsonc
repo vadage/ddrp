@@ -15,6 +15,8 @@
 	"observability": {
 		"enabled": true
 	},
+	"workers_dev": false,
+	"preview_urls": false,
 	"env": {
 		"production": {
 			"vars": {
@@ -35,7 +37,7 @@
 	"kv_namespaces": [
 		{
 			"binding": "MESSAGES",
-			"id": "d7d5a1a6ae994b21acaa4b0d95b91149"
+			"id": "local"
 		}
 	]
 	/**
