@@ -78,100 +78,96 @@
 	<title>Open Dead Drop</title>
 </svelte:head>
 
-<div class="min-h-screen bg-background p-4">
-	<div class="mx-auto max-w-2xl pt-8">
-		<Card.Root>
-			<Card.Header>
-				<Card.Title class="flex items-center gap-2 text-lg">
-					<MessageSquareIcon class="h-4 w-4" />
-					Open Dead Drop
-				</Card.Title>
-				<Card.Description>
-					<p>
-						The message will be fully decrypted in your browser. After opening the dead drop, this
-						link will become invalid for any further use.
-					</p>
-				</Card.Description>
-			</Card.Header>
+<div class="mx-auto max-w-2xl p-4 pt-8">
+	<Card.Root>
+		<Card.Header>
+			<Card.Title class="flex items-center gap-2 text-lg">
+				<MessageSquareIcon class="h-4 w-4" />
+				Open Dead Drop
+			</Card.Title>
+			<Card.Description>
+				The message will be fully decrypted in your browser. After opening the dead drop, this link
+				will become invalid for any further use.
+			</Card.Description>
+		</Card.Header>
 
-			<Card.Content>
-				{#if decrypted}
-					<div class="space-y-4">
-						<div class="space-y-2">
-							<Label for="message" class="text-sm font-medium">Message</Label>
-							<Textarea readonly value={decrypted} id="message" />
-						</div>
-						<Button href="/" class="w-full">Reply</Button>
+		<Card.Content>
+			{#if decrypted}
+				<div class="space-y-4">
+					<div class="space-y-2">
+						<Label for="message" class="text-sm font-medium">Message</Label>
+						<Textarea readonly value={decrypted} id="message" />
 					</div>
-				{:else if message}
-					{#if passwordRequired}
-						<form onsubmit={decrypt} class="space-y-4">
-							<div class="space-y-2">
-								<Label for="password" class="flex items-center gap-2 text-sm font-medium">
-									<Lock class="h-3 w-3" />
-									Password
-								</Label>
-								<div class="relative">
-									<Input
-										id="password"
-										type={showPassword ? 'text' : 'password'}
-										bind:value={password}
-										placeholder="Enter password"
-										class="w-full pr-10"
-										name="password"
-										autocomplete="off"
-										autofocus
-									/>
-									<button
-										type="button"
-										onclick={() => (showPassword = !showPassword)}
-										class="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
-										aria-label={showPassword ? 'Hide Password' : 'Show Password'}
-										aria-pressed={showPassword}
-									>
-										{#if showPassword}
-											<EyeOffIcon class="h-4 w-4" />
-										{:else}
-											<EyeIcon class="h-4 w-4" />
-										{/if}
-									</button>
-								</div>
+					<Button href="/" class="w-full">Reply</Button>
+				</div>
+			{:else if message}
+				{#if passwordRequired}
+					<form onsubmit={decrypt} class="space-y-4">
+						<div class="space-y-2">
+							<Label for="password" class="flex items-center gap-2 text-sm font-medium">
+								<Lock class="h-3 w-3" />
+								Password
+							</Label>
+							<div class="relative">
+								<Input
+									id="password"
+									type={showPassword ? 'text' : 'password'}
+									bind:value={password}
+									placeholder="Enter password"
+									class="w-full pr-10"
+									name="password"
+									autocomplete="off"
+									autofocus
+								/>
+								<button
+									type="button"
+									onclick={() => (showPassword = !showPassword)}
+									class="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
+									aria-label={showPassword ? 'Hide Password' : 'Show Password'}
+									aria-pressed={showPassword}
+								>
+									{#if showPassword}
+										<EyeOffIcon class="h-4 w-4" />
+									{:else}
+										<EyeIcon class="h-4 w-4" />
+									{/if}
+								</button>
 							</div>
+						</div>
 
-							{#if decryptFailed}
-								<Alert.Root variant="destructive">
-									<CircleAlertIcon class="size-4" />
-									<Alert.Title>Error</Alert.Title>
-									<Alert.Description>
-										Failed to decrypt the message. Check if the password is correct.
-									</Alert.Description>
-								</Alert.Root>
-							{/if}
-
-							<Button type="submit" disabled={!password} class="w-full">Decrypt Message</Button>
-						</form>
-					{/if}
-				{:else}
-					<div class="space-y-4">
-						{#if failed}
+						{#if decryptFailed}
 							<Alert.Root variant="destructive">
 								<CircleAlertIcon class="size-4" />
 								<Alert.Title>Error</Alert.Title>
 								<Alert.Description>
-									Failed to open dead drop. It might have been opened already or it has expired.
+									Failed to decrypt the message. Check if the password is correct.
 								</Alert.Description>
 							</Alert.Root>
 						{/if}
 
-						<Button onclick={open} disabled={isOpening} class="w-full">
-							{#if isOpening}
-								<LoaderCircleIcon class="animate-spin" />
-							{/if}
-							Continue
-						</Button>
-					</div>
+						<Button type="submit" disabled={!password} class="w-full">Decrypt Message</Button>
+					</form>
 				{/if}
-			</Card.Content>
-		</Card.Root>
-	</div>
+			{:else}
+				<div class="space-y-4">
+					{#if failed}
+						<Alert.Root variant="destructive">
+							<CircleAlertIcon class="size-4" />
+							<Alert.Title>Error</Alert.Title>
+							<Alert.Description>
+								Failed to open dead drop. It might have been opened already or it has expired.
+							</Alert.Description>
+						</Alert.Root>
+					{/if}
+
+					<Button onclick={open} disabled={isOpening} class="w-full">
+						{#if isOpening}
+							<LoaderCircleIcon class="animate-spin" />
+						{/if}
+						Continue
+					</Button>
+				</div>
+			{/if}
+		</Card.Content>
+	</Card.Root>
 </div>

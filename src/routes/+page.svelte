@@ -99,130 +99,126 @@
 	<title>Create Dead Drop</title>
 </svelte:head>
 
-<div class="min-h-screen bg-background p-4">
-	<div class="mx-auto max-w-2xl pt-8">
-		<Card.Root>
-			<Card.Header>
-				<Card.Title class="flex items-center gap-2 text-lg">
-					<MessageSquareIcon class="h-4 w-4" />
-					Create Dead Drop
-				</Card.Title>
-				<Card.Description>
-					<p>
-						Your message is fully encrypted in your browser. The server never sees the contents or
-						the password. A secure link is created, usable only once or until it expires. After
-						that, it's gone for good.
-					</p>
-				</Card.Description>
-			</Card.Header>
+<div class="mx-auto max-w-2xl p-4 pt-8">
+	<Card.Root>
+		<Card.Header>
+			<Card.Title class="flex items-center gap-2 text-lg">
+				<MessageSquareIcon class="h-4 w-4" />
+				Create Dead Drop
+			</Card.Title>
+			<Card.Description>
+				Your message is fully encrypted in your browser. The server never sees the contents or the
+				password. A secure link is created, usable only once or until it expires. After that, it's
+				gone for good.
+			</Card.Description>
+		</Card.Header>
 
-			<Card.Content>
-				{#if shareableMessage}
-					<div class="space-y-4">
-						<div class="space-y-2">
-							<Label for="link" class="text-sm font-medium">Secure Link</Label>
-							<Input readonly value={shareableMessage.link} id="link" onfocus={copyLink} />
-						</div>
-						<Button class="w-full" onclick={copyLink}>Copy To Clipboard</Button>
-						<div class="grid grid-cols-2 gap-x-2">
-							<Button class="w-full" variant="destructive" onclick={revoke}>Revoke</Button>
-							<Button class="w-full" variant="secondary" onclick={reset}>New Dead Drop</Button>
+		<Card.Content>
+			{#if shareableMessage}
+				<div class="space-y-4">
+					<div class="space-y-2">
+						<Label for="link" class="text-sm font-medium">Secure Link</Label>
+						<Input readonly value={shareableMessage.link} id="link" onfocus={copyLink} />
+					</div>
+					<Button class="w-full" onclick={copyLink}>Copy To Clipboard</Button>
+					<div class="grid grid-cols-2 gap-x-2">
+						<Button class="w-full" variant="destructive" onclick={revoke}>Revoke</Button>
+						<Button class="w-full" variant="secondary" onclick={reset}>New Dead Drop</Button>
+					</div>
+				</div>
+			{:else}
+				<form onsubmit={handleSubmit} class="space-y-4">
+					<div class="space-y-2">
+						<Label for="message" class="text-sm font-medium">Message</Label>
+						<div class="relative">
+							<Textarea
+								id="message"
+								bind:value={message}
+								placeholder="Enter your message here..."
+								class="min-h-[100px] resize-none pr-12"
+								maxlength={maxCharacters}
+							/>
+							<div class="absolute right-2 bottom-2">
+								<Badge
+									variant={charactersRemaining < 50 ? 'destructive' : 'secondary'}
+									class="text-xs"
+								>
+									{charactersRemaining}
+								</Badge>
+							</div>
 						</div>
 					</div>
-				{:else}
-					<form onsubmit={handleSubmit} class="space-y-4">
+
+					<div class="grid grid-cols-1 gap-x-2 gap-y-4 md:grid-cols-3">
 						<div class="space-y-2">
-							<Label for="message" class="text-sm font-medium">Message</Label>
+							<Label for="ttl" class="flex items-center gap-2 text-sm font-medium">
+								<Clock class="h-3 w-3" />
+								Expiration
+							</Label>
+							<Select.Root type="single" bind:value={ttl}>
+								<Select.Trigger id="ttl" class="w-full">{ttlContent}</Select.Trigger>
+								<Select.Content>
+									{#each ttlOptions as option (option.value)}
+										<Select.Item value={option.value} label={option.label}>
+											{option.label}
+										</Select.Item>
+									{/each}
+								</Select.Content>
+							</Select.Root>
+						</div>
+						<div class="col-span-2 space-y-2">
+							<Label for="password" class="flex items-center gap-2 text-sm font-medium">
+								<Lock class="h-3 w-3" />
+								Password (Optional)
+							</Label>
 							<div class="relative">
-								<Textarea
-									id="message"
-									bind:value={message}
-									placeholder="Enter your message here..."
-									class="min-h-[100px] resize-none pr-12"
-									maxlength={maxCharacters}
+								<Input
+									id="password"
+									type={showPassword ? 'text' : 'password'}
+									bind:value={password}
+									placeholder="Enter optional password"
+									class="w-full pr-10"
+									name="password"
+									autocomplete="off"
 								/>
-								<div class="absolute right-2 bottom-2">
-									<Badge
-										variant={charactersRemaining < 50 ? 'destructive' : 'secondary'}
-										class="text-xs"
-									>
-										{charactersRemaining}
-									</Badge>
-								</div>
+								<button
+									type="button"
+									onclick={() => (showPassword = !showPassword)}
+									class="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
+									aria-label={showPassword ? 'Hide Password' : 'Show Password'}
+									aria-pressed={showPassword}
+								>
+									{#if showPassword}
+										<EyeOffIcon class="h-4 w-4" />
+									{:else}
+										<EyeIcon class="h-4 w-4" />
+									{/if}
+								</button>
 							</div>
-						</div>
-
-						<div class="grid grid-cols-1 gap-x-2 gap-y-4 md:grid-cols-3">
-							<div class="space-y-2">
-								<Label for="ttl" class="flex items-center gap-2 text-sm font-medium">
-									<Clock class="h-3 w-3" />
-									Expiration
-								</Label>
-								<Select.Root type="single" bind:value={ttl}>
-									<Select.Trigger id="ttl" class="w-full">{ttlContent}</Select.Trigger>
-									<Select.Content>
-										{#each ttlOptions as option (option.value)}
-											<Select.Item value={option.value} label={option.label}>
-												{option.label}
-											</Select.Item>
-										{/each}
-									</Select.Content>
-								</Select.Root>
-							</div>
-							<div class="col-span-2 space-y-2">
-								<Label for="password" class="flex items-center gap-2 text-sm font-medium">
-									<Lock class="h-3 w-3" />
-									Password (Optional)
-								</Label>
-								<div class="relative">
-									<Input
-										id="password"
-										type={showPassword ? 'text' : 'password'}
-										bind:value={password}
-										placeholder="Enter optional password"
-										class="w-full pr-10"
-										name="password"
-										autocomplete="off"
-									/>
-									<button
-										type="button"
-										onclick={() => (showPassword = !showPassword)}
-										class="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
-										aria-label={showPassword ? 'Hide Password' : 'Show Password'}
-										aria-pressed={showPassword}
-									>
-										{#if showPassword}
-											<EyeOffIcon class="h-4 w-4" />
-										{:else}
-											<EyeIcon class="h-4 w-4" />
-										{/if}
-									</button>
-								</div>
-								{#if password}
-									<PasswordStrength {password} />
-								{/if}
-							</div>
-						</div>
-
-						{#if failed}
-							<Alert.Root variant="destructive">
-								<CircleAlertIcon class="size-4" />
-								<Alert.Title>Error</Alert.Title>
-								<Alert.Description>
-									Failed to create dead drop. Please try again later.
-								</Alert.Description>
-							</Alert.Root>
-						{/if}
-
-						<Button type="submit" disabled={!isFormValid || isProcessing} class="w-full">
-							{#if isProcessing}
-								<LoaderCircleIcon class="animate-spin" />
+							{#if password}
+								<PasswordStrength {password} />
 							{/if}
-							Generate Link
-						</Button>
-					</form>
-				{/if}
-			</Card.Content>
-		</Card.Root>
-	</div>
+						</div>
+					</div>
+
+					{#if failed}
+						<Alert.Root variant="destructive">
+							<CircleAlertIcon class="size-4" />
+							<Alert.Title>Error</Alert.Title>
+							<Alert.Description>
+								Failed to create dead drop. Please try again later.
+							</Alert.Description>
+						</Alert.Root>
+					{/if}
+
+					<Button type="submit" disabled={!isFormValid || isProcessing} class="w-full">
+						{#if isProcessing}
+							<LoaderCircleIcon class="animate-spin" />
+						{/if}
+						Generate Link
+					</Button>
+				</form>
+			{/if}
+		</Card.Content>
+	</Card.Root>
 </div>
