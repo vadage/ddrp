@@ -37,7 +37,7 @@ resource "cloudflare_workers_kv_namespace" "prod_messages_kv" {
 
 resource "cloudflare_bot_management" "prod_bot_management" {
   zone_id            = cloudflare_zone.prod_domain.id
-  ai_bots_protection = "block"
+  ai_bots_protection = "disabled"
   crawler_protection = "enabled"
   fight_mode         = true
 }
@@ -88,4 +88,10 @@ resource "cloudflare_zone_setting" "prod_min_tls_version" {
   zone_id    = cloudflare_zone.prod_domain.id
   setting_id = "min_tls_version"
   value      = "1.2"
+}
+
+resource "cloudflare_zone_setting" "prod_0rtt" {
+  zone_id    = cloudflare_zone.prod_domain.id
+  setting_id = "0rtt"
+  value      = "on"
 }

@@ -76,7 +76,7 @@ export const retrieveMessage = query(SharedMessageValidator, async (data: Shared
 	return JSON.parse(message) as Message;
 });
 
-export const revokeMessage = query(SharedMessageValidator, async (data: SharedMessage) => {
+export const revokeMessage = command(SharedMessageValidator, async (data: SharedMessage) => {
 	const event = getRequestEvent();
 	const { platform } = event;
 	if (!platform) {
