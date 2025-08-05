@@ -137,6 +137,7 @@
 								placeholder="Enter your message here..."
 								class="min-h-[100px] resize-none pr-12"
 								maxlength={maxCharacters}
+								autofocus
 							/>
 							<div class="absolute right-2 bottom-2">
 								<Badge
