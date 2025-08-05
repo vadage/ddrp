@@ -31,8 +31,7 @@
 		}
 	},
 	"vars": {
-		"APP_URL": "http://localhost:5173",
-		"HMAC_SECRET": "!ChangeMe!"
+		"APP_URL": "http://localhost:5173"
 	},
 	"kv_namespaces": [
 		{
