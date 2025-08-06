@@ -3,6 +3,7 @@ import { command, getRequestEvent, query } from '$app/server';
 import { nanoid } from 'nanoid';
 import { createHmac } from 'node:crypto';
 import { error } from '@sveltejs/kit';
+import { ivLength, maxMessageLength, saltLength } from '$lib/shared';
 
 export type Message = {
 	blob: string;
@@ -26,11 +27,11 @@ type SharedMessage = {
 
 const MessagePayloadValidator = v.object({
 	message: v.object({
-		blob: v.pipe(v.string(), v.base64()),
-		iv: v.pipe(v.array(v.number()), v.length(12)),
-		salt: v.pipe(v.array(v.number()), v.length(16))
+		cipher: v.pipe(v.array(v.number()), v.maxLength(maxMessageLength + 16)),
+		iv: v.pipe(v.array(v.number()), v.length(ivLength)),
+		salt: v.pipe(v.array(v.number()), v.length(saltLength))
 	}),
-	ttl: v.pipe(v.number(), v.maxValue(604800))
+	ttl: v.pipe(v.number(), v.maxValue(7 * 24 * 60 * 60))
 });
 
 const SharedMessageValidator = v.object({

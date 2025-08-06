@@ -1,10 +1,11 @@
 import { createMessage, type Message } from '$lib/message.remote';
 import argon2 from 'argon2-browser/dist/argon2-bundled.min.js';
+import { ivLength, saltLength } from '$lib/shared';
 
 export async function generateLink(message: string, password: string, ttl: string) {
 	const enc = new TextEncoder();
-	const salt = crypto.getRandomValues(new Uint8Array(16));
-	const iv = crypto.getRandomValues(new Uint8Array(12));
+	const salt = crypto.getRandomValues(new Uint8Array(saltLength));
+	const iv = crypto.getRandomValues(new Uint8Array(ivLength));
 
 	const passwordExists = !!password;
 	if (!passwordExists) {
@@ -19,7 +20,7 @@ export async function generateLink(message: string, password: string, ttl: strin
 	const shareable = await createMessage({
 		ttl: parseInt(ttl),
 		message: {
-			blob: encodeBytes(ciphertext),
+			cipher: Array.from(ciphertext),
 			iv: Array.from(iv),
 			salt: Array.from(salt)
 		}
@@ -33,7 +34,7 @@ export async function generateLink(message: string, password: string, ttl: strin
 
 export async function decryptMessage(message: Message, password: string) {
 	const dec = new TextDecoder();
-	const { salt, iv, blob } = message;
+	const { salt, iv, cipher } = message;
 
 	const key = await createKey(password, new Uint8Array(salt), 'decrypt');
 
@@ -43,7 +44,7 @@ export async function decryptMessage(message: Message, password: string) {
 			iv: new Uint8Array(iv)
 		},
 		key,
-		decodeBytes(blob)
+		new Uint8Array(cipher)
 	);
 	return dec.decode(decrypted);
 }
@@ -66,8 +67,4 @@ async function createKey(password: string, salt: Uint8Array, usage: KeyUsage) {
 
 function encodeBytes(data: Uint8Array) {
 	return btoa(String.fromCharCode(...data));
-}
-
-function decodeBytes(data: string) {
-	return Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
 }

@@ -20,6 +20,7 @@
 	import { revokeMessage, type ShareableMessage } from '$lib/message.remote';
 	import { toast } from 'svelte-sonner';
 	import PasswordStrength from '$lib/components/PasswordStrength.svelte';
+	import { maxMessageLength } from '$lib/shared';
 
 	let message = $state('');
 	let ttl = $state('86400');
@@ -40,7 +41,7 @@
 		failed = false;
 	}
 
-	const maxCharacters = 1000;
+	const maxCharacters = maxMessageLength;
 
 	const ttlOptions = [
 		{ value: '900', label: '15 minutes' },
