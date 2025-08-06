@@ -1,6 +1,6 @@
 import { createMessage, type Message } from '$lib/message.remote';
-import argon2 from 'argon2-browser/dist/argon2-bundled.min.js';
 import { ivLength, saltLength } from '$lib/shared';
+import { default as load_crypto_wasm, derive_key } from 'crypto_wasm';
 
 export async function generateLink(message: string, password: string, ttl: string) {
 	const enc = new TextEncoder();
@@ -9,7 +9,7 @@ export async function generateLink(message: string, password: string, ttl: strin
 
 	const passwordExists = !!password;
 	if (!passwordExists) {
-		password = encodeBytes(crypto.getRandomValues(new Uint8Array(16)));
+		password = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))));
 	}
 
 	const key = await createKey(password, salt, 'encrypt');
@@ -50,21 +50,7 @@ export async function decryptMessage(message: Message, password: string) {
 }
 
 async function createKey(password: string, salt: Uint8Array, usage: KeyUsage) {
-	const pass = new TextEncoder().encode(password);
-
-	const { hash: derivedKey } = await argon2.hash({
-		pass,
-		salt,
-		type: argon2.ArgonType.Argon2id,
-		hashLen: 32,
-		time: 3,
-		mem: 65536,
-		parallelism: 1
-	});
-
+	await load_crypto_wasm();
+	const derivedKey = derive_key(password, salt);
 	return await crypto.subtle.importKey('raw', derivedKey, { name: 'AES-GCM' }, false, [usage]);
-}
-
-function encodeBytes(data: Uint8Array) {
-	return btoa(String.fromCharCode(...data));
 }

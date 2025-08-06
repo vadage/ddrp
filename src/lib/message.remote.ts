@@ -6,7 +6,7 @@ import { error } from '@sveltejs/kit';
 import { ivLength, maxMessageLength, saltLength } from '$lib/shared';
 
 export type Message = {
-	blob: string;
+	cipher: number[];
 	iv: number[];
 	salt: number[];
 };
