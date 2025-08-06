@@ -25,6 +25,9 @@ jobs:
         with:
           version: 'v0.10.3'
 
+      - name: Install wasm-opt
+        run: cargo install wasm-opt
+
       - name: Build WASM
         run: wasm-pack build --target web
         working-directory: crypto
