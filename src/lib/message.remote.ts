@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import { createHmac } from 'node:crypto';
 import { error } from '@sveltejs/kit';
 import { ivLength, maxMessageLength, saltLength } from '$lib/shared';
+import { env } from '$env/dynamic/private';
 
 export type Message = {
 	cipher: number[];
@@ -46,10 +47,10 @@ export const createMessage = command(MessagePayloadValidator, async (data: Messa
 	}
 
 	const id = nanoid(36);
-	const signature = signId(id, platform);
-	const link = `${platform?.env.APP_URL}/open?id=${id}&sig=${signature}`;
+	const signature = signId(id);
+	const link = `${platform.env.APP_URL}/open?id=${id}&sig=${signature}`;
 
-	await platform?.env.MESSAGES.put(id, JSON.stringify(data.message), {
+	await platform.env.MESSAGES.put(id, JSON.stringify(data.message), {
 		expirationTtl: data.ttl
 	});
 
@@ -64,7 +65,7 @@ export const retrieveMessage = query(SharedMessageValidator, async (data: Shared
 	}
 
 	const { id, signature } = data;
-	if (signature !== signId(id, platform)) {
+	if (signature !== signId(id)) {
 		error(400, 'Invalid signature');
 	}
 
@@ -85,7 +86,7 @@ export const revokeMessage = command(SharedMessageValidator, async (data: Shared
 	}
 
 	const { id, signature } = data;
-	if (signature !== signId(id, platform)) {
+	if (signature !== signId(id)) {
 		error(400, 'Invalid signature');
 	}
 
@@ -93,6 +94,6 @@ export const revokeMessage = command(SharedMessageValidator, async (data: Shared
 	return { success: true };
 });
 
-function signId(id: string, platform: App.Platform): string {
-	return createHmac('sha256', platform.env.HMAC_SECRET).update(id).digest('hex');
+function signId(id: string): string {
+	return createHmac('sha256', env.HMAC_SECRET).update(id).digest('hex');
 }
