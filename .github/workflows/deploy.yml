@@ -43,7 +43,7 @@ jobs:
         run: cargo install wasm-opt
 
       - name: Build WASM
-        run: wasm-pack build --target web
+        run: wasm-pack build --target web --out-name web && wasm-pack build --target bundler --out-name node
         working-directory: crypto
 
       - name: Install dependencies
@@ -60,5 +60,7 @@ jobs:
           environment: production
           secrets: |
             HMAC_SECRET
+            KEY_DERIVATION_SECRET
         env:
           HMAC_SECRET: ${{ secrets.HMAC_SECRET }}
+          KEY_DERIVATION_SECRET: ${{ secrets.KEY_DERIVATION_SECRET }}
