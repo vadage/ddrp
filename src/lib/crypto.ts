@@ -38,7 +38,7 @@ async function createKey(password: string, salt: Uint8Array, usage: KeyUsage) {
 		['deriveKey']
 	);
 	return await crypto.subtle.deriveKey(
-		{ name: 'PBKDF2', salt, iterations: 1_000_000, hash: 'SHA-256' },
+		{ name: 'PBKDF2', salt, iterations: 100_000, hash: 'SHA-256' },
 		derivedKey,
 		{ name: 'AES-GCM', length: 256 },
 		false,
