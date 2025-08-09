@@ -7,7 +7,7 @@
 	"name": "ddrp",
 	"main": ".svelte-kit/cloudflare/_worker.js",
 	"compatibility_flags": ["nodejs_compat"],
-	"compatibility_date": "2025-08-02",
+	"compatibility_date": "2025-07-30",
 	"assets": {
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
@@ -20,7 +20,7 @@
 	"env": {
 		"production": {
 			"vars": {
-				"APP_URL": "https://ddrp.fyi"
+				"PUBLIC_APP_URL": "https://ddrp.fyi"
 			},
 			"kv_namespaces": [
 				{
@@ -29,9 +29,6 @@
 				}
 			]
 		}
-	},
-	"vars": {
-		"APP_URL": "http://localhost:5173"
 	},
 	"kv_namespaces": [
 		{

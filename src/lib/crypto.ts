@@ -1,5 +1,4 @@
 import { ivLength, saltLength } from '$lib/shared';
-import { init, derive_key } from '$lib/crypto-wasm';
 
 export async function encrypt(message: Uint8Array, password: string) {
 	const salt = crypto.getRandomValues(new Uint8Array(saltLength));
@@ -30,9 +29,19 @@ export async function decrypt(data: Uint8Array, password: string) {
 }
 
 async function createKey(password: string, salt: Uint8Array, usage: KeyUsage) {
-	if (typeof init === 'function') {
-		await init();
-	}
-	const derivedKey = derive_key(password, salt);
-	return await crypto.subtle.importKey('raw', derivedKey, { name: 'AES-GCM' }, false, [usage]);
+	const enc = new TextEncoder();
+	const derivedKey = await crypto.subtle.importKey(
+		'raw',
+		enc.encode(password),
+		{ name: 'PBKDF2' },
+		false,
+		['deriveKey']
+	);
+	return await crypto.subtle.deriveKey(
+		{ name: 'PBKDF2', salt, iterations: 1_000_000, hash: 'SHA-256' },
+		derivedKey,
+		{ name: 'AES-GCM', length: 256 },
+		false,
+		[usage]
+	);
 }

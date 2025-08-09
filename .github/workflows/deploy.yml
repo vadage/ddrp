@@ -17,35 +17,6 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache wasm-pack
-        id: wasm-pack
-        uses: actions/cache@v4
-        with:
-          path: ~/.cargo/bin/wasm-pack
-          key: ${{ runner.os }}-wasm-pack
-
-      - name: Setup wasm-pack
-        if: steps.wasm-pack.outputs.cache-hit != 'true'
-        run: cargo install wasm-pack
-
-      - name: Cache wasm-opt
-        id: wasm-opt
-        uses: actions/cache@v4
-        with:
-          path: ~/.cargo/bin/wasm-opt
-          key: ${{ runner.os }}-wasm-opt
-
-      - name: Setup wasm-opt
-        if: steps.wasm-opt.outputs.cache-hit != 'true'
-        run: cargo install wasm-opt
-
-      - name: Build WASM
-        run: wasm-pack build --target web --out-name web && wasm-pack build --target bundler --out-name node
-        working-directory: crypto
-
       - name: Install dependencies
         run: npm ci
 

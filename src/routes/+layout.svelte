@@ -36,7 +36,7 @@
 				<div>
 					<h2 class="mb-4 text-lg font-semibold">Under the Hood</h2>
 					<ul class="space-y-2 text-sm">
-						<li>Key derivation: <span class="font-mono">Argon2id</span></li>
+						<li>Key derivation: <span class="font-mono">PBKDF2</span></li>
 						<li>Encryption: <span class="font-mono">AES-GCM</span></li>
 						<li>Zero-Knowledge: We can't read your messages</li>
 					</ul>

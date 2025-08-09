@@ -4,7 +4,8 @@ import { nanoid } from 'nanoid';
 import { createHmac } from 'node:crypto';
 import { error } from '@sveltejs/kit';
 import { ivLength, maxMessageLength, saltLength } from '$lib/shared';
-import { env } from '$env/dynamic/private';
+import { env as privateEnv } from '$env/dynamic/private';
+import { env as publicEnv } from '$env/dynamic/public';
 import { decrypt, encrypt } from '$lib/crypto';
 
 export type Message = Uint8Array;
@@ -51,9 +52,9 @@ export const createMessage = command(MessagePayloadValidator, async (data: Messa
 
 	const id = nanoid(36);
 	const signature = signId(id);
-	const link = `${platform.env.APP_URL}/open?id=${id}&sig=${signature}`;
+	const link = `${publicEnv.PUBLIC_APP_URL}/open?id=${id}&sig=${signature}`;
 
-	const encrypted = await encrypt(data.message, env.KEY_DERIVATION_SECRET);
+	const encrypted = await encrypt(data.message, privateEnv.KEY_DERIVATION_SECRET);
 	await platform.env.MESSAGES.put(id, encrypted.buffer, {
 		expirationTtl: data.ttl
 	});
@@ -76,7 +77,7 @@ export const retrieveMessage = query(SharedMessageValidator, async (data: Shared
 
 	await platform.env.MESSAGES.delete(id);
 
-	return (await decrypt(new Uint8Array(message), env.KEY_DERIVATION_SECRET)) as Message;
+	return (await decrypt(new Uint8Array(message), privateEnv.KEY_DERIVATION_SECRET)) as Message;
 });
 
 export const revokeMessage = command(SharedMessageValidator, async (data: SharedMessage) => {
@@ -92,5 +93,5 @@ export const revokeMessage = command(SharedMessageValidator, async (data: Shared
 });
 
 function signId(id: string): string {
-	return createHmac('sha256', env.HMAC_SECRET).update(id).digest('hex');
+	return createHmac('sha256', privateEnv.HMAC_SECRET).update(id).digest('hex');
 }
