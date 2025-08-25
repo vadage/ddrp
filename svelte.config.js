@@ -10,6 +10,9 @@ const config = {
 		adapter: adapter(),
 		experimental: {
 			remoteFunctions: true
+		},
+		paths: {
+			relative: false
 		}
 	}
 };
