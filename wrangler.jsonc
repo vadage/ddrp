@@ -10,7 +10,9 @@
 	"compatibility_date": "2025-07-30",
 	"assets": {
 		"binding": "ASSETS",
-		"directory": ".svelte-kit/cloudflare"
+		"directory": ".svelte-kit/cloudflare",
+		"not_found_handling": "404-page",
+		"run_worker_first": ["/_app/remote/*"]
 	},
 	"observability": {
 		"enabled": true
