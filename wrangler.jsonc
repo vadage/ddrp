@@ -29,6 +29,12 @@
 					"binding": "MESSAGES",
 					"id": "d7d5a1a6ae994b21acaa4b0d95b91149"
 				}
+			],
+			"routes": [
+				{
+					"pattern": "ddrp.fyi",
+					"custom_domain": true
+				}
 			]
 		}
 	},
